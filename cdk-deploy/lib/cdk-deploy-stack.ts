@@ -1,7 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import path = require('path');
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 const {
   aws_s3: s3,
@@ -20,7 +19,6 @@ export class CdkDeployStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      // accessControl: s3.BucketAccessControl.PRIVATE,
       bucketName: 'asw-shop',
       websiteIndexDocument: 'index.html',
     });
@@ -29,16 +27,6 @@ export class CdkDeployStack extends cdk.Stack {
       comment: 'My distribution OAI',
     });
 
-    // const distribution = new cloudFront.Distribution(this, 'Distribution', {
-    //   defaultBehavior: {
-    //     origin: new origins.S3Origin(bucket, {
-    //       originAccessIdentity: OAI,
-    //     }),
-    //     allowedMethods: cloudFront.AllowedMethods.ALLOW_ALL,
-    //     viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-    //   },
-    //   defaultRootObject: 'index.html',
-    // });
 
     const distribution = new cloudFront.CloudFrontWebDistribution(this, 'distrib', {
       originConfigs:[
