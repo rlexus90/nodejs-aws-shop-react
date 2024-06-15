@@ -20,7 +20,7 @@ export class CdkDeployStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      accessControl: s3.BucketAccessControl.PRIVATE,
+      // accessControl: s3.BucketAccessControl.PRIVATE,
       bucketName: 'asw-shop',
       websiteIndexDocument: 'index.html',
     });
