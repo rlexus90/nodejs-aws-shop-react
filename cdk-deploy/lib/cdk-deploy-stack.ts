@@ -21,6 +21,7 @@ export class CdkDeployStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       bucketName: 'asw-shop',
       websiteIndexDocument: 'index.html',
+			websiteErrorDocument: 'index.html',
     });
 
     const OAI = new cloudFront.OriginAccessIdentity(this, 'OAI-new', {
@@ -33,7 +34,7 @@ export class CdkDeployStack extends cdk.Stack {
         {
           behaviors:[{isDefaultBehavior:true},{
             pathPattern:'/*',
-            viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            // viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           }],
           s3OriginSource:{
             s3BucketSource: bucket,
