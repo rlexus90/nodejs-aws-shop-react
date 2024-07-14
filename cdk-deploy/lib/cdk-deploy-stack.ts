@@ -49,12 +49,12 @@ export class CdkDeployStack extends cdk.Stack {
       new iam.PolicyStatement({
         actions: ['s3:GetObject'],
         resources: [bucket.arnForObjects('*')],
-        principals: [new iam.ServicePrincipal('cloudfront.amazonaws.com')],
-        conditions: {
-          "StringEquals":{
-            "AWS:SourceArn":`arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`
-          }
-        },
+        principals: [new iam.ServicePrincipal('cloudfront.amazonaws.com'), new iam.CanonicalUserPrincipal(OAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
+        // conditions: {
+        //   "StringEquals":{
+        //     "AWS:SourceArn":`arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`
+        //   }
+        // },
         effect: iam.Effect.ALLOW,
         sid:"AllowCloudFrontServicePrincipalReadOnly",
       })
