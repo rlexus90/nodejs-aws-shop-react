@@ -51,6 +51,7 @@ export function useUpsertAvailableProduct() {
     axios.put<AvailableProduct>(`${API_PATHS.product}/products`, values, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
+        "Content-Type": "application/json",
       },
     })
   );

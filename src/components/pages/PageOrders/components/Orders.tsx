@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Link } from "react-router-dom";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,9 +13,10 @@ import {
   useInvalidateOrders,
   useOrders,
 } from "~/queries/orders";
+import { OrderReq } from "~/models/Order";
 
 export default function Orders() {
-  const { data } = useOrders();
+  const data = useOrders().data as unknown as OrderReq[];
   const invalidateOrders = useInvalidateOrders();
   const { mutate: deleteOrder } = useDeleteOrder();
 
@@ -38,9 +40,7 @@ export default function Orders() {
               </TableCell>
               <TableCell align="right">{order.items.length}</TableCell>
               <TableCell align="right">{order.address?.address}</TableCell>
-              <TableCell align="right">
-                {order.statusHistory[order.statusHistory.length - 1].status}
-              </TableCell>
+              <TableCell align="right">{order.statusHistory.status!}</TableCell>
               <TableCell align="right">
                 <Button
                   size="small"

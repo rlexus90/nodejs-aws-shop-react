@@ -15,10 +15,16 @@ const queryClient = new QueryClient({
   },
 });
 
-if (import.meta.env.DEV) {
-  const { worker } = await import("./mocks/browser");
-  worker.start({ onUnhandledRequest: "bypass" });
-}
+// if (import.meta.env.DEV) {
+//   const { worker } = await import("./mocks/browser");
+//   worker.start({ onUnhandledRequest: "bypass" });
+// }
+
+axios.interceptors.request.use((request) => {
+  if (request.headers)
+    request.headers.user = `${localStorage.getItem("user_id")}`;
+  return request;
+});
 
 axios.interceptors.response.use(
   (response) => response,

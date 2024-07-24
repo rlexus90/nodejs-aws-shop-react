@@ -34,14 +34,20 @@ export class CdkDeployStack extends cdk.Stack {
         {
           behaviors:[{isDefaultBehavior:true},{
             pathPattern:'/*',
-            // viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           }],
           s3OriginSource:{
             s3BucketSource: bucket,
             originAccessIdentity: OAI,
           },
         },
-      ]
+      ],
+			defaultRootObject: 'index.html',
+			errorConfigurations:[{
+				errorCode: 404,
+				responseCode: 200,
+				responsePagePath: '/index.html'
+			}]
     })
 
     
@@ -50,11 +56,6 @@ export class CdkDeployStack extends cdk.Stack {
         actions: ['s3:GetObject'],
         resources: [bucket.arnForObjects('*')],
         principals: [new iam.ServicePrincipal('cloudfront.amazonaws.com'), new iam.CanonicalUserPrincipal(OAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
-        // conditions: {
-        //   "StringEquals":{
-        //     "AWS:SourceArn":`arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`
-        //   }
-        // },
         effect: iam.Effect.ALLOW,
         sid:"AllowCloudFrontServicePrincipalReadOnly",
       })

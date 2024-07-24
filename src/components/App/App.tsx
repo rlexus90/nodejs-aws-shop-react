@@ -7,8 +7,13 @@ import PageProductImport from "~/components/pages/admin/PageProductImport/PagePr
 import PageCart from "~/components/pages/PageCart/PageCart";
 import PageProducts from "~/components/pages/PageProducts/PageProducts";
 import { Typography } from "@mui/material";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    localStorage.setItem("user_id", "1f9809e5-b1b7-48c3-bd38-693ac3a1ccba");
+  }, []);
+
   return (
     <MainLayout>
       <Routes>
