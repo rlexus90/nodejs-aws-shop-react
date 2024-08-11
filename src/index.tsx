@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { theme } from "~/theme";
+import axios, { AxiosError } from "axios";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,10 +15,28 @@ const queryClient = new QueryClient({
   },
 });
 
-if (import.meta.env.DEV) {
-  const { worker } = await import("./mocks/browser");
-  worker.start({ onUnhandledRequest: "bypass" });
-}
+// if (import.meta.env.DEV) {
+//   const { worker } = await import("./mocks/browser");
+//   worker.start({ onUnhandledRequest: "bypass" });
+// }
+
+axios.interceptors.request.use((request) => {
+  if (request.headers)
+    request.headers.user = `${localStorage.getItem("user_id")}`;
+  return request;
+});
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      window.alert(`Unauthorized: You must add Header "Authorization"`);
+    }
+    if (error.response?.status === 403) {
+      window.alert(`Forbidden: Invalid Credentials`);
+    }
+  }
+);
 
 const container = document.getElementById("app");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

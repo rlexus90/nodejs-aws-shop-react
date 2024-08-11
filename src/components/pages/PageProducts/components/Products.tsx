@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { formatAsPrice } from "~/utils/utils";
 import AddProductToCart from "~/components/AddProductToCart/AddProductToCart";
 import { useAvailableProducts } from "~/queries/products";
+import image from "../../../../../public/img/Product.png";
 
 export default function Products() {
   const { data = [], isLoading } = useAvailableProducts();
@@ -23,11 +24,7 @@ export default function Products() {
           <Card
             sx={{ height: "100%", display: "flex", flexDirection: "column" }}
           >
-            <CardMedia
-              sx={{ pt: "56.25%" }}
-              image={`https://source.unsplash.com/random?sig=${index}`}
-              title="Image title"
-            />
+            <CardMedia sx={{ pt: "84%" }} image={image} title="Image title" />
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography gutterBottom variant="h5" component="h2">
                 {product.title}

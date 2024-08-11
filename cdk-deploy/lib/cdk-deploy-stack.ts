@@ -21,6 +21,7 @@ export class CdkDeployStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       bucketName: 'asw-shop',
       websiteIndexDocument: 'index.html',
+			websiteErrorDocument: 'index.html',
     });
 
     const OAI = new cloudFront.OriginAccessIdentity(this, 'OAI-new', {
@@ -40,7 +41,13 @@ export class CdkDeployStack extends cdk.Stack {
             originAccessIdentity: OAI,
           },
         },
-      ]
+      ],
+			defaultRootObject: 'index.html',
+			errorConfigurations:[{
+				errorCode: 404,
+				responseCode: 200,
+				responsePagePath: '/index.html'
+			}]
     })
 
     
@@ -48,12 +55,7 @@ export class CdkDeployStack extends cdk.Stack {
       new iam.PolicyStatement({
         actions: ['s3:GetObject'],
         resources: [bucket.arnForObjects('*')],
-        principals: [new iam.ServicePrincipal('cloudfront.amazonaws.com')],
-        conditions: {
-          "StringEquals":{
-            "AWS:SourceArn":`arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`
-          }
-        },
+        principals: [new iam.ServicePrincipal('cloudfront.amazonaws.com'), new iam.CanonicalUserPrincipal(OAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
         effect: iam.Effect.ALLOW,
         sid:"AllowCloudFrontServicePrincipalReadOnly",
       })

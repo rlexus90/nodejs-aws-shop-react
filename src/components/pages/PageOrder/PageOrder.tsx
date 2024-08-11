@@ -1,12 +1,12 @@
-import React from "react";
-import { Order, OrderItem } from "~/models/Order";
+// import React from "react";
+import { Order } from "~/models/Order";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import PaperLayout from "~/components/PaperLayout/PaperLayout";
 import Typography from "@mui/material/Typography";
 import API_PATHS from "~/constants/apiPaths";
 import { CartItem } from "~/models/CartItem";
-import { AvailableProduct } from "~/models/Product";
+// import { AvailableProduct } from "~/models/Product";
 import ReviewOrder from "~/components/pages/PageCart/components/ReviewOrder";
 import { OrderStatus, ORDER_STATUS_FLOW } from "~/constants/order";
 import Button from "@mui/material/Button";
@@ -18,7 +18,7 @@ import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
+// import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import Box from "@mui/material/Box";
 import { useQueries } from "react-query";
@@ -39,55 +39,62 @@ export default function PageOrder() {
         return res.data;
       },
     },
-    {
-      queryKey: "products",
-      queryFn: async () => {
-        const res = await axios.get<AvailableProduct[]>(
-          `${API_PATHS.bff}/product/available`
-        );
-        return res.data;
-      },
-    },
+    // {
+    //   queryKey: "products",
+    //   queryFn: async () => {
+    //     const res = await axios.get<AvailableProduct[]>(
+    //       `${API_PATHS.bff}/product/available`
+    //     );
+    //     return res.data;
+    //   },
+    // },
   ]);
   const [
     { data: order, isLoading: isOrderLoading },
-    { data: products, isLoading: isProductsLoading },
+    // { data: products, isLoading: isProductsLoading },
   ] = results;
   const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
   const invalidateOrder = useInvalidateOrder();
-  const cartItems: CartItem[] = React.useMemo(() => {
-    if (order && products) {
-      return order.items.map((item: OrderItem) => {
-        const product = products.find((p) => p.id === item.productId);
-        if (!product) {
-          throw new Error("Product not found");
-        }
-        return { product, count: item.count };
-      });
-    }
-    return [];
-  }, [order, products]);
 
-  if (isOrderLoading || isProductsLoading) return <p>loading...</p>;
+  // const cartItems: CartItem[] = React.useMemo(() => {
+  //   if (order && products) {
+  //     return order.items.map((item: OrderItem) => {
+  //       const product = products.find((p) => p.id === item.productId);
+  //       if (!product) {
+  //         throw new Error("Product not found");
+  //       }
+  //       return { product, count: item.count };
+  //     });
+  //   }
+  //   return [];
+  // }, [order, products]);
 
-  const statusHistory = order?.statusHistory || [];
+  if (isOrderLoading) return <p>loading...</p>;
 
-  const lastStatusItem = statusHistory[statusHistory.length - 1];
+  const statusHistory = order?.statusHistory;
+
+  // const lastStatusItem = statusHistory[statusHistory.length - 1];
 
   return order ? (
     <PaperLayout>
       <Typography component="h1" variant="h4" align="center">
         Manage order
       </Typography>
-      <ReviewOrder address={order.address} items={cartItems} />
+      <ReviewOrder
+        address={order.address}
+        items={order.items as unknown as CartItem[]}
+      />
       <Typography variant="h6">Status:</Typography>
       <Typography variant="h6" color="primary">
-        {lastStatusItem?.status.toUpperCase()}
+        {statusHistory?.status.toUpperCase()}
       </Typography>
       <Typography variant="h6">Change status:</Typography>
       <Box py={2}>
         <Formik
-          initialValues={{ status: lastStatusItem.status, comment: "" }}
+          initialValues={{
+            status: statusHistory?.status || ("" as OrderStatus),
+            comment: "",
+          }}
           enableReinitialize
           onSubmit={(values) =>
             updateOrderStatus(
@@ -154,7 +161,7 @@ export default function PageOrder() {
               <TableCell align="right">Comment</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          {/* <TableBody>
             {statusHistory.map((statusHistoryItem) => (
               <TableRow key={order.id}>
                 <TableCell component="th" scope="row">
@@ -166,7 +173,7 @@ export default function PageOrder() {
                 <TableCell align="right">{statusHistoryItem.comment}</TableCell>
               </TableRow>
             ))}
-          </TableBody>
+          </TableBody> */}
         </Table>
       </TableContainer>
     </PaperLayout>
